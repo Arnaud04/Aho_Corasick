@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define largeur_tab 500
+#define hauteur_tab 500
+
+void tri_bulle(char tri[][largeur_tab],int nb_carac_max,int nbmot);
+int compteur_caractere(char tri[][largeur_tab],int i);
+void strechange( char * chaine1 , char * chaine2);
+void affiche_tableau(char mot[hauteur_tab][largeur_tab], int nbmot);
+
+/*void strechange( char * chaine1 , char * chaine2)
+{
+    char tmp = *chaine1;
+    *chaine1 = *chaine2;
+    *chaine2 = tmp;
+}*/
+
+void tri_bulle(char tri[][largeur_tab],int nb_carac_max,int nbmot)
+{
+    int parcours = nbmot-2;
+    int a;
+    int i;
+    int j;
+
+    for( a=0; a<parcours; a++)
+    {
+        for(i=0;i<nbmot-1;i++)
+        {
+            if(strcmp(tri[i],tri[i+1])>0)
+            {
+
+               for (j=0; j<nb_carac_max; j++)
+               {
+                   //strechange(tri[i][j],tri[i+1][j]);
+                    char tmp = tri[i][j];
+                    tri[i][j] = tri [i+1][j];
+                    tri[i+1][j] = tmp;
+               }
+
+            }
+
+
+        }
+        parcours--;
+    }
+}
+
+/*
+int compteur_caractere(char tri[][largeur_tab],int i)
+{
+    int j=0;
+
+        while (tri[i][j]!='\0')
+        {
+            j++;
+        }
+
+    return j;
+
+}*/
+
+void affiche_tableau(char mot[hauteur_tab][largeur_tab], int nbmot)
+{
+     for (int i=0; i<nbmot; i++)
+     {
+        printf("%s\n",mot[i]);
+     }
+
+}
+
+int main()
+{
+    int i,j;
+    char tab[hauteur_tab][largeur_tab];
+    char mot[hauteur_tab][largeur_tab]= {0};
+
+    FILE* fichier = NULL;
+    int caractereActuel;
+
+
+    int nb_carac = 0;
+    int nbmot=0;
+    int notRead = 0;
+    int nb_carac_max =0;
+
+    fichier = fopen("texte.txt", "r");
+
+    if (fichier != NULL)
+    {
+        // Boucle de lecture des caractères un à un
+        do
+        {
+            caractereActuel = fgetc(fichier); // On lit le caractère
+
+
+            //Si le caractere est une fin de mot on incremente le nombre de mot et on remet nb_carac a 0
+            if(caractereActuel == ' ' || caractereActuel == '\n' || caractereActuel == ':')
+            {
+                //printf("\n\nChangement de mot, mot numero : %d\n",nbmot);
+
+                nbmot++;
+                nb_carac = 0;
+
+
+            }
+            else{ // Sinon on le stock dans le tableau de mots
+                //printf("\nAjout du caractere %c au mot numero %d",caractereActuel,nbmot);
+
+                  mot[nbmot][nb_carac] = caractereActuel;
+                  nb_carac++;
+
+                  if(nb_carac > nb_carac_max)
+                  {
+                      nb_carac_max = nb_carac;
+                  }
+
+            }
+
+        } while (caractereActuel != EOF); // On continue tant que fgetc n'a pas retourné EOF (fin de fichier)
+        nbmot ++;
+        nb_carac_max ++; //on rejoute le /0 de fin de chaine de caractere
+        fclose(fichier);
+    }
+
+    tri_bulle(mot,nb_carac_max,nbmot);
+    printf("nb car max = %d\n",nb_carac_max);
+    affiche_tableau(mot,nbmot);
+
+    return 0;
+}
