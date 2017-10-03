@@ -5,9 +5,12 @@
 #define hauteur_tab 500
 
 void tri_bulle(char tri[][largeur_tab],int nb_carac_max,int nbmot);
-int compteur_caractere(char tri[][largeur_tab],int i);
-void strechange( char * chaine1 , char * chaine2);
-void affiche_tableau(char mot[hauteur_tab][largeur_tab], int nbmot);
+int nbCaracMax(char tab[hauteur_tab][largeur_tab],int nbmot);
+void affiche_tableau(char tab[hauteur_tab][largeur_tab] ,int nbmot);
+//int compteur_caractere(char tri[][largeur_tab],int i);
+//void strechange( char * chaine1 , char * chaine2);
+
+
 
 /*void strechange( char * chaine1 , char * chaine2)
 {
@@ -18,7 +21,7 @@ void affiche_tableau(char mot[hauteur_tab][largeur_tab], int nbmot);
 
 void tri_bulle(char tri[][largeur_tab],int nb_carac_max,int nbmot)
 {
-    int parcours = nbmot-2;
+    int parcours = nbmot;
     int a;
     int i;
     int j;
@@ -46,6 +49,25 @@ void tri_bulle(char tri[][largeur_tab],int nb_carac_max,int nbmot)
     }
 }
 
+int nbCaracMax(char tab[hauteur_tab][largeur_tab],int nbmot)
+{
+    int max=0;
+    int j=0;
+    for(int i=0; i<nbmot; i++)
+    {
+        while (tab[i][j]!='\0')
+        {
+            j++;
+        }
+
+        if (max < j)
+        {
+           max=j;
+        }
+
+    }
+    return j+1; //pour \0
+}
 /*
 int compteur_caractere(char tri[][largeur_tab],int i)
 {
@@ -60,13 +82,12 @@ int compteur_caractere(char tri[][largeur_tab],int i)
 
 }*/
 
-void affiche_tableau(char mot[hauteur_tab][largeur_tab], int nbmot)
+void affiche_tableau(char tab[hauteur_tab][largeur_tab] ,int nbmot)
 {
-     for (int i=0; i<nbmot; i++)
-     {
-        printf("%s\n",mot[i]);
-     }
-
+    for (int i=0; i<nbmot; i++)
+    {
+        printf("%s\n",tab[i]);
+    }
 }
 
 int main()
@@ -74,15 +95,13 @@ int main()
     int i,j;
     char tab[hauteur_tab][largeur_tab];
     char mot[hauteur_tab][largeur_tab]= {0};
-
-    FILE* fichier = NULL;
     int caractereActuel;
-
-
     int nb_carac = 0;
     int nbmot=0;
-    int notRead = 0;
     int nb_carac_max =0;
+
+
+    FILE* fichier = NULL;
 
     fichier = fopen("texte.txt", "r");
 
@@ -123,9 +142,35 @@ int main()
         fclose(fichier);
     }
 
-    tri_bulle(mot,nb_carac_max,nbmot);
-    printf("nb car max = %d\n",nb_carac_max);
-    affiche_tableau(mot,nbmot);
+
+
+
+    int nbWord;
+    char myword[hauteur_tab][largeur_tab];
+
+    printf("Combien de mots voulez vous rechercher?\n");
+    scanf("%d",&nbWord);
+
+
+
+    if (nbWord <1)
+    {
+        printf("Erreur, recherchez au moins un mots\n");
+        exit (1);
+    }
+
+    for(int i=0; i<nbWord; i++)
+    {
+        printf("Entrez le mot %d ",i+1);
+        scanf ("%s",&myword[i]);
+    }
+
+    affiche_tableau(myword,nbWord);
+    printf("nb caractere : %d \n",nbCaracMax(myword,nbWord));
+    printf("nb mots : %d \n",nbWord);
+    tri_bulle(myword,nbCaracMax(myword,nbWord),nbWord);
+    printf("\n");
+    affiche_tableau(myword,nbWord);
 
     return 0;
 }
