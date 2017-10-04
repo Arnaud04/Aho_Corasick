@@ -7,33 +7,88 @@
 void tri_bulle(char tri[][largeur_tab],int nb_carac_max,int nbmot);
 int nbCaracMax(char tab[hauteur_tab][largeur_tab],int nbmot);
 void affiche_tableau(char tab[hauteur_tab][largeur_tab] ,int nbmot);
-//int compteur_caractere(char tri[][largeur_tab],int i);
-//void strechange( char * chaine1 , char * chaine2);
+void tri_ahoCorasick(int tabNboccurence[],char myWord[hauteur_tab][largeur_tab],int nbWord,int nbCarWord,char texte[hauteur_tab][largeur_tab],int nbWordTexte,int nbCartext );
+int nombreOccurenceCarac(char carac[hauteur_tab][largeur_tab],int caracX,int caracY,char tab[hauteur_tab][largeur_tab],int colonne,int nbMoTab);
+int rechercheIndiceCaractere(char tab[hauteur_tab][largeur_tab],char carAchercher,int colonne,int nbmot);
 
 
 
-/*void strechange( char * chaine1 , char * chaine2)
+int nombreOccurenceCarac(char carac[hauteur_tab][largeur_tab],int caracX,int caracY,char tab[hauteur_tab][largeur_tab],int colonne,int nbMoTab)
 {
-    char tmp = *chaine1;
-    *chaine1 = *chaine2;
-    *chaine2 = tmp;
-}*/
+    int max=0;
+
+    for(int i=0; i<nbMoTab; i++)
+    {
+        if (tab[i][colonne] == carac[caracX][caracY])
+        {
+            max ++;
+        }
+    }
+
+
+    return max;
+}//renvoie le nombre d'occurence d'un caracteree voulu dans une colonne d'un tableau
+
+
+int rechercheIndiceCaractere(char tab[hauteur_tab][largeur_tab],char carAchercher,int colonne,int nbmot)
+{
+    for (int i=0; i<nbmot; i++)
+    {
+        if(tab[i][colonne] == carAchercher)
+            return colonne;
+    }
+}
+
+void tri_ahoCorasick(int tabNboccurence[hauteur_tab],char myWord[hauteur_tab][largeur_tab],int nbWord,int nbCarWord,char texte[hauteur_tab][largeur_tab],int nbWordTexte,int nbCartext )
+{
+
+    char tabEchec[hauteur_tab][26]  ={{0}}; //initialisation du tableau echec
+
+
+        if ((nombreOccurenceCarac(texte,nbWordTexte,0,myWord,nbWord,0)==0)) //si il y a au moins un caractere identique avec le tableau texte a la ieme colonne et myWord parmis toute les ligne de la ieme colonne
+        {
+        
+            /* while((nombreOccurenceCarac(texte,nbWordTexte,i,myWord,nbWord,i)>0))
+            {
+                int indicecar = rechercheIndiceCaractere(myWord,texte[nbWordTexte][i],i,nbWord);
+                if(myWord[i+1][indicecar] == '\0')
+                {
+                    printf("+ ");
+                }
+                i++;
+            }*/
+            printf("Aucune occurence trouvé dans le fichier\n");
+        }
+        for (int i=0; i<nbWord; i++)
+        {
+            for (int j=0; j<nbCarWord;j++)
+            {
+                
+            }
+        }
+
+    printf("%d ",nombreOccurenceCarac(texte,0,0,myWord,0,nbWord));
+/*
+    for(int l=0; l<nbWord; l++)
+    {
+        printf("%d \n",tabNboccurence[l]);
+    }
+*/
+
+}
 
 void tri_bulle(char tri[][largeur_tab],int nb_carac_max,int nbmot)
 {
     int parcours = nbmot;
-    int a;
-    int i;
-    int j;
 
-    for( a=0; a<parcours; a++)
+    for(int k=0; k<parcours+5; k++)
     {
-        for(i=0;i<nbmot-1;i++)
+        for(int i=0;i<nbmot-1;i++)
         {
             if(strcmp(tri[i],tri[i+1])>0)
             {
 
-               for (j=0; j<nb_carac_max; j++)
+               for (int j=0; j<nb_carac_max; j++)
                {
                    //strechange(tri[i][j],tri[i+1][j]);
                     char tmp = tri[i][j];
@@ -42,7 +97,6 @@ void tri_bulle(char tri[][largeur_tab],int nb_carac_max,int nbmot)
                }
 
             }
-
 
         }
         parcours--;
@@ -68,19 +122,7 @@ int nbCaracMax(char tab[hauteur_tab][largeur_tab],int nbmot)
     }
     return j+1; //pour \0
 }
-/*
-int compteur_caractere(char tri[][largeur_tab],int i)
-{
-    int j=0;
 
-        while (tri[i][j]!='\0')
-        {
-            j++;
-        }
-
-    return j;
-
-}*/
 
 void affiche_tableau(char tab[hauteur_tab][largeur_tab] ,int nbmot)
 {
@@ -88,17 +130,19 @@ void affiche_tableau(char tab[hauteur_tab][largeur_tab] ,int nbmot)
     {
         printf("%s\n",tab[i]);
     }
+    printf("\n");
 }
 
 int main()
 {
     int i,j;
     char tab[hauteur_tab][largeur_tab];
-    char mot[hauteur_tab][largeur_tab]= {0};
+    char mot[hauteur_tab][largeur_tab]= {{0}};
     int caractereActuel;
     int nb_carac = 0;
     int nbmot=0;
     int nb_carac_max =0;
+    int tabNboccurence[hauteur_tab] = {0};
 
 
     FILE* fichier = NULL;
@@ -107,7 +151,7 @@ int main()
 
     if (fichier != NULL)
     {
-        // Boucle de lecture des caractères un à un
+
         do
         {
             caractereActuel = fgetc(fichier); // On lit le caractère
@@ -142,16 +186,11 @@ int main()
         fclose(fichier);
     }
 
-
-
-
     int nbWord;
     char myword[hauteur_tab][largeur_tab];
 
     printf("Combien de mots voulez vous rechercher?\n");
     scanf("%d",&nbWord);
-
-
 
     if (nbWord <1)
     {
@@ -165,12 +204,19 @@ int main()
         scanf ("%s",&myword[i]);
     }
 
+    printf("Tableau de mon fichier texte.txt :\n");
+    affiche_tableau(mot,nbmot);
+    printf("Tableau de mes mots entrez : \n\n");
     affiche_tableau(myword,nbWord);
-    printf("nb caractere : %d \n",nbCaracMax(myword,nbWord));
+    printf("nb caractere max : %d \n",nbCaracMax(myword,nbWord));
     printf("nb mots : %d \n",nbWord);
-    tri_bulle(myword,nbCaracMax(myword,nbWord),nbWord);
-    printf("\n");
+    printf("===============================================\n");
+    printf("Tableau du tri de mes mots\n\n");
+    tri_bulle(myword,nbCaracMax(myword,nbWord),nbWord); //On tri le tableau par ordre aphabetique
     affiche_tableau(myword,nbWord);
-
+    printf("nb caractere max : %d\n",nbCaracMax(myword,nbWord));
+    printf("nb mots : %d \n",nbWord);
+    printf("===============================================\n");
+    tri_ahoCorasick( tabNboccurence, myword, nbWord, nbCaracMax(myword,nbWord), mot, nbmot, nb_carac );
     return 0;
 }
